@@ -1,0 +1,7 @@
+the variable dog is equal to the integer 4
+the variable num is equal to the string "test"
+if the variable dog is less than the float 3.0 then print the string "true"
+else print the string "false"
+if the variable dog is equal to the integer 2
+else print the string "guter"
+print the string "final line"
