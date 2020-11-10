@@ -1,0 +1,16 @@
+loop
+the variable rps is equal to the random integer between 1 and 3
+
+//intializing rock paper and scissors variables
+the variable rock is equal to the string "rock"
+the variable paper is equal to the string "paper"
+the variable scissors is equal to the string "scissors"
+
+if the variable rps is equal to the integer 1 then the variable answer is equal to the string "rock"
+if the variable rps is equal to the integer 2 then the variable answer is equal to the string "paper"
+if the variable rps is equal to the integer 3 then the variable answer is equal to the string "scissors"
+
+the variable guess is equal to the input "Rock, paper, or scissors?\n"
+
+if the variable rps is equal to the variable guess then print the string "Sorry you have tied!"
+else print the variable answer

@@ -1,20 +1,30 @@
 import ast
+import random
+from datetime import datetime
 
 global globalVariables
 globalVariables = {}
 
 lastLineIfFalse = bool
+looping = False
+firstrun = True
 
 def interpret(script="//"):
     global lastLineIfFalse
+    global looping
+    global firstrun
     # if a comment
     if script[:2] == "//": 
         pass
     # if an empty line
     elif script == "\n":
         pass
-    
     scriptWords = script.split(' ')
+    if scriptWords[0].lower() == 'firstrun':
+        if firstrun:
+            scriptWords.pop(0)
+        else:
+            pass
     # if an if statement
     if scriptWords[0].lower() == 'if':
         
@@ -40,7 +50,46 @@ def interpret(script="//"):
     if scriptWords[0].lower() == 'the' and scriptWords[1].lower() == 'variable':
         # if setting a variable
         if scriptWords[3:6] == ['is', 'equal', 'to']:
-            Functions().setVar(scriptWords[2], scriptWords[7], scriptWords[8])
+            # if an input
+            if scriptWords[7] == 'input':
+                vName = scriptWords[2]
+                for _ in range(8):
+                    scriptWords.pop(0)
+                s = Functions().buildString(scriptWords)
+                #s =  ast.literal_eval(s)
+                i = Functions().fixType(input(s))
+                if str(type(i)) == "<class 'int'>":
+                    vType = 'integer'
+                elif str(type(i)) == "<class 'string'>":
+                    vType = 'string'
+                elif str(type(i)) == "<class 'boolean'>":
+                    vType = 'boolean'
+                elif str(type(i)) == "<class 'float'>":
+                    vType = 'float'
+                else:
+                    vType = 'string'
+                Functions().setVar(vName, vType, i)
+            # if a random
+            elif scriptWords[7] == 'random':
+                name = scriptWords[2]
+                Type = scriptWords[8]
+                if Type == 'integer':
+                    if scriptWords[9] == 'between':
+                        a = int(scriptWords[10])
+                        b = int(scriptWords[12])
+                        r = random.randint(a, b)
+                        Functions().setVar(name, Type, r)
+
+            # if a string
+            elif scriptWords[7] == 'string':
+                vName = scriptWords[2]
+                vType = 'string'
+                for _ in range(8):
+                    scriptWords.pop(0)
+                s = Functions().buildString(scriptWords)
+                Functions().setVar(vName, vType, s)
+            else:
+                Functions().setVar(scriptWords[2], scriptWords[7], scriptWords[8])
         elif scriptWords[3:6] == ['is', 'increased', 'by']:
             ### if specifying integer or float
             try:
@@ -101,6 +150,53 @@ def interpret(script="//"):
                     Functions().divVar(scriptWords[2], float(scriptWords[6]))
                 else:
                     Functions().divVar(scriptWords[2], int(scriptWords[6]))
+    # if a static variable
+    if scriptWords[0].lower() == 'the' and scriptWords[1].lower() == 'staticvariable':
+        if scriptWords[2] in globalVariables.keys():
+            pass
+        else:
+            # if setting a variable
+            if scriptWords[3:6] == ['is', 'equal', 'to']:
+                # if an input
+                if scriptWords[7] == 'input':
+                    vName = scriptWords[2]
+                    for _ in range(8):
+                        scriptWords.pop(0)
+                    s = Functions().buildString(scriptWords)
+                    #s =  ast.literal_eval(s)
+                    i = Functions().fixType(input(s))
+                    if str(type(i)) == "<class 'int'>":
+                        vType = 'integer'
+                    elif str(type(i)) == "<class 'string'>":
+                        vType = 'string'
+                    elif str(type(i)) == "<class 'boolean'>":
+                        vType = 'boolean'
+                    elif str(type(i)) == "<class 'float'>":
+                        vType = 'float'
+                    else:
+                        vType = 'string'
+                    Functions().setVar(vName, vType, i)
+                # if a random
+                elif scriptWords[7] == 'random':
+                    name = scriptWords[2]
+                    Type = scriptWords[8]
+                    if Type == 'integer':
+                        if scriptWords[9] == 'between':
+                            a = int(scriptWords[10])
+                            b = int(scriptWords[12])
+                            r = random.randint(a, b)
+                            Functions().setVar(name, Type, r)
+
+                # if a string
+                elif scriptWords[7] == 'string':
+                    vName = scriptWords[2]
+                    vType = 'string'
+                    for _ in range(8):
+                        scriptWords.pop(0)
+                    s = Functions().buildString(scriptWords)
+                    Functions().setVar(vName, vType, s)
+                else:
+                    Functions().setVar(scriptWords[2], scriptWords[7], scriptWords[8])
     # if a print statement
     elif scriptWords[0].lower() == 'print':
         if scriptWords[1:3] == ['the', 'variable']:
@@ -122,6 +218,37 @@ def interpret(script="//"):
         # get the type of a variable
         if scriptWords[2] == 'type':
             print(globalVariables[Functions().handleReturn(scriptWords[6])]['type'])
+        # get the current time
+        elif scriptWords[2] == 'time':
+            if len(scriptWords) == 3:
+                print(datetime.now())
+            elif len(scriptWords) == 4:
+                frmt = scriptWords[3]
+                frmt = list(frmt)
+                frmtlst = []
+                for i in range(len(frmt)):
+                    if frmt[i].lower() == 'd':
+                        frmtlst.append('%d')
+                    elif frmt[i].lower() == 'm':
+                        frmtlst.append('%m')
+                    elif frmt[i].lower() == 'y':
+                        frmtlst.append('%Y')
+                time = datetime.now()
+                print(time.strftime('/'.join(frmtlst)))
+    # if an interpret statement
+    elif scriptWords[0].lower() == 'interpret':
+        # if interpreting python
+        if scriptWords[1].lower() == 'python':
+            for _ in range(2):
+                scriptWords.pop(0)
+            s = Functions().buildString(scriptWords)
+            print(s)
+            exec(s)
+    if scriptWords[0] == 'loop' or scriptWords[0] == 'loop\n':
+        looping = True
+    if scriptWords[0] == 'stop' or scriptWords[0] == 'stop\n':
+        looping = False
+        exit()
 
 ################
 # Conditionals #
@@ -148,10 +275,16 @@ class Conditionals:
             
             # if comparing for equality
             if wordList[4:7] == ['is', 'equal', 'to']:
-                if arg1 == arg2:
-                    return True
-                else:
-                    return False
+                try:
+                    if arg1 == arg2:
+                        return True
+                    else:
+                        return False
+                except:
+                    if globalVariables[arg1]['value'] == arg2:
+                        return True
+                    else:
+                        return False
             # if checking for greater than
             elif wordList[4:7] == ['is', 'greater', 'than']:
                 print(arg1, arg2)
@@ -183,6 +316,10 @@ class Functions:
             globalVariables[varName] = {'type':varType, 'value':str(varValue)}
         elif varType == 'boolean':
             globalVariables[varName] = {'type':varType, 'value':Functions().stringToBool(varValue)}
+        elif varType == 'input':
+            globalVariables[varName] = {'type':varType, 'value':varValue}
+        else:
+            Errors().typeError(varType)
 
     def addNumToVar(self, baseVarName, addVal):
         globalVariables[baseVarName]['value'] += addVal
@@ -198,8 +335,28 @@ class Functions:
 
     def buildString(self, wordList = []):
         string = ' '.join(wordList)
+        if len(string) > 1:
+            s = string.split()
+            l = len(s)
+            if s[-2:] == ['\\', 'n']:
+                s.pop(l)
         string = ast.literal_eval(string)
         return string
+
+    def fixType(self, string):
+        try:
+            string = ast.literal_eval(string)
+            if string == 'true':
+                string = True
+            elif string == 'false':
+                string = False
+            return string
+        except:
+            if string == 'true':
+                string = True
+            elif string == 'false':
+                string = False
+            return string
 
     def stringToBool(self, string):
         string = Functions().handleReturn(string)
@@ -208,4 +365,14 @@ class Functions:
         elif string == 'false' or string == 'False':
             return False
         else:
-            return "error"
+            Errors().boolError(string)
+
+##########
+# Errors #
+##########
+class Errors:
+    def typeError(self, Type=''):
+        raise TypeError(f'"{Type}" is not an acceptable type')
+    
+    def boolError(self, Bool=''):
+        raise TypeError(f'"{Bool}" is not an acceptable boolean value')

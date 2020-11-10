@@ -1,0 +1,8 @@
+the staticvariable rand is equal to the random integer between 1 and 10
+firstrun print the string "Guess a number between 1 and 10!"
+loop
+the variable guess is equal to the input "\n\nInput your guess: "
+the variable stop is equal to the string "stop"
+if the variable guess is equal to the variable stop then stop
+if the variable guess is equal to the variable rand then print the string "Congrats you guessed correctly!\nType stop to exit!"
+else print the string "Not quite. Guess again!"

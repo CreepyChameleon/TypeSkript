@@ -10,9 +10,13 @@ A scripting language that is written in sentences
 
 `the variable NAME is equal to the TYPE VALUE`
     
-    assigns the variable called NAME to the value VALUE
+    Assigns the variable called NAME to the value VALUE
 Variable types
-> String, Integer, Float, Boolean
+> String, Integer, Float, Boolean, Input
+
+`the variable NAME is equal to the input "This is an input: "`
+
+    Prompts the user for an input, which is stored in the given variable
 
 #### Math
 `the variable NAME is increased by VALUE`
@@ -89,11 +93,39 @@ Variable types
 `is less than`
 > Checks if the first is less than the second
 
-#### Get
+#### Misc
 `get`
     
-    prints attributes of a variable to the console
+    Prints attributes of a variable to the console
 
 `get the type of the variable NAME`
     
-    prints the type of the variable called `NAME`
+    Prints the type of the variable called `NAME`
+
+`get the time`
+
+    Prints the current time
+
+`get the time DMY`
+
+    Prints the time in any combination of day month and year
+
+`loop`
+
+    Tells the program to loop infinitely
+
+`Stop`
+
+    Ends the program prematurely and/or ends the loop
+
+#### Scripting
+`interpret`
+
+    Interprets the subsequent string in the language given
+
+`interpret python "for i in range(2): \n\tprint(i)"`
+
+    Prints the numbers 0 and 1. Escape codes are required in order to keep the code on a single line
+
+**Languages**
+> Python
